@@ -1,3 +1,5 @@
+use chip_8::run;
+
 fn main() {
-    println!("Hello, world!");
+    run();
 }
