@@ -4,12 +4,9 @@ pub mod keyboard;
 pub mod renderer;
 pub mod speaker;
 
-use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
-use std::ops::Index;
-use sdl2::rect::Rect;
 use crate::chip8::{Chip8, SCALE};
 use crate::renderer::{COLS, ROWS};
 
@@ -25,12 +22,9 @@ pub fn run() {
         .unwrap();
 
     let mut canvas = window.into_canvas().present_vsync().build().unwrap();
-
     let mut vm = Chip8::new(&mut canvas);
 
     'running: loop {
-
-        vm.renderer.clear();
         vm.renderer.test_render();
         vm.renderer.render();
 
@@ -45,9 +39,6 @@ pub fn run() {
                 _ => {}
             }
         }
-
-        vm.renderer.clear();
-
-       ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        ::std::thread::sleep(Duration::new(0,  1_000_000_000u32/60));
     }
 }

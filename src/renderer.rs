@@ -53,17 +53,13 @@ impl <'a> Renderer<'a> {
     }
 
     pub fn render (&mut self) {
-        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
-        self.canvas.clear();
-
         self.canvas.set_draw_color(Color::RGB(255, 255, 255));
-        self.canvas.present();
 
         for i in 0..COLS*ROWS{
             let x =( i % COLS )* self.scale;
             let y = (i / COLS) * self.scale;
-            if self.buffer[i as usize] != 0x0 {
-                self.canvas.fill_rect(Rect::new(x as i32, y as i32, self.scale as u32, self.scale  as u32));
+            if self.buffer[i as usize] != 0 {
+                self.canvas.fill_rect(Rect::new(x as i32, y as i32, self.scale as u32, self.scale  as u32)).unwrap();
             }
 
         }
