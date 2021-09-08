@@ -43,6 +43,7 @@ impl <'a> Renderer<'a> {
             y += ROWS;
         }
 
+
         let pl = (x + (y * COLS)) as usize;
         self.buffer[pl] ^= 1;
         self.buffer[pl] != 1
@@ -72,3 +73,4 @@ impl <'a> Renderer<'a> {
         self.set_pixel(9, 7);
     }
 }
+
