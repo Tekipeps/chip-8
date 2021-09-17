@@ -29,9 +29,14 @@ pub fn run() {
 
     let mut vm = Chip8::new();
 
-    // vm.load_program("./test_opcode.ch8".to_string());
+    vm.load_program("./test_opcode.ch8".to_string());
     // vm.load_program("./c8_test.c8".to_string());
-    vm.load_program("./games/TEST/IBM.ch8".to_string());
+    // vm.load_program("./games/TEST/IBM.ch8".to_string());
+    // vm.load_program("./games/TEST/C8PIC.ch8".to_string());
+    // vm.load_program("./games/TEST/TAPEWORM.ch8".to_string());
+    // vm.load_program("./games/TEST/TIMEBOMB.ch8".to_string());
+    // vm.load_program("./games/TEST/X-MIRROR.ch8".to_string());
+    // vm.load_program("./games/TEST/Rocket2.ch8".to_string());
 
      loop {
          vm.run_cycle();
@@ -39,8 +44,6 @@ pub fn run() {
 
          // vm.keyboard.get_key_press(&mut event_pump);
 
-
-        // vm;
-        ::std::thread::sleep(Duration::new(0,  1_000_000_000u32/60));
+         ::std::thread::sleep(Duration::new(0,  1_000_000_000u32/60));
     }
 }
