@@ -32,13 +32,9 @@ impl Cpu {
         cpu
     }
 
-    pub fn load_program(&mut self, filename: String) -> Result<()> {
-        let mut buf = [0; 3583];
-        let mut file = File::open(filename)?;
-
-        file.read(&mut buf)?;
+    pub fn load_rom(&mut self, rom: [u8; 3583]) -> Result<()> {
         let start_addr = 0x200;
-        for (i, byt) in buf.iter().enumerate() {
+        for (i, byt) in rom.iter().enumerate() {
             self.bus.write_to_ram((start_addr + i) as u16, *byt);
         }
         Ok(())
@@ -50,11 +46,11 @@ impl Cpu {
     }
 
     pub fn cycle(&mut self) {
-        println!("{}", self.bus.ram);
+        // println!("{}", self.bus.ram);
         for _ in 0..self.speed {
             if !self.paused {
                 let opcode = self.get_opcode();
-                println!("{:#04X}", opcode);
+                println!("{:#06X}", opcode);
                 self.execute_instruction(opcode);
             }
         }
@@ -126,7 +122,8 @@ impl Cpu {
             }, // Store BCD representation of Vx in memory locations I, I+1, and I+2.
             (0xF,   _, 0x5, 0x5) => self.ld_i_vx(x), // Store registers V0 through Vx in memory starting at location I.
             (0xF,   _, 0x6, 0x5) => self.ld_vx_i(x), // Read registers V0 through Vx from memory starting at location I.
-            _                    => todo!("opcode: {:#04x}", opcode),
+            // _                    => todo!("opcode: {:#04x}", opcode),
+            _                    => {},
         }
         self.pc += 2;
     }
@@ -134,20 +131,22 @@ impl Cpu {
     fn drw_x_y(&mut self, x:u8, y:u8, n:u8){
         let x = x % 64;
         let y = y % 32;
-        let mut set_vf = false;
 
         self.write_reg_v(0xF, 0);
-        for sprite_y in 0..n {
-            let sprite_byt = self.bus.read_from_ram(self.i + sprite_y as u16);
-            if self.bus.draw_byte(sprite_byt, x, y+sprite_y) {
-                set_vf = true;
-            }
-        }
 
-        if set_vf {
-            self.write_reg_v(0xF, 1);
-        } else {
-            self.write_reg_v(0xF, 0);
+        for row in 0..n {
+            let mut sprite_row = self.bus.read_from_ram(self.i + row as u16);
+
+            for col in 0..8 {
+                if (sprite_row & 0x80) > 0 {
+                    let vx = self.read_reg_v(x);
+                    let vy = self.read_reg_v(y);
+                    if self.bus.screen.set_pixel((vx + col) as u32, (vy + row) as u32) {
+                      self.write_reg_v(0xF, 1);
+                    }
+                }
+                sprite_row <<= 1;
+            }
         }
     }
     fn  ld_vx_vy (&mut self, x:u8, y: u8) {
@@ -174,7 +173,8 @@ impl Cpu {
             self.write_reg_v(0xF, 0);
         }
 
-        self.write_reg_v(x, arg * 2);
+        let res = arg.overflowing_mul(2);
+        self.write_reg_v(x, res.0);
     }
 
     fn subn_xy (&mut self, x: u8, y: u8) {
@@ -186,8 +186,8 @@ impl Cpu {
         } else {
             self.write_reg_v(0xF, 0);
         }
-
-        self.write_reg_v(x, arg_2 - arg_1);
+        let res = arg_2.overflowing_sub(arg_1);
+        self.write_reg_v(x, res.0);
     }
     fn shr_x (&mut self, x: u8) {
         let arg = self.read_reg_v(x);
@@ -218,8 +218,9 @@ impl Cpu {
     }
     fn add_vx_kk (&mut self, x: u8, kk: u8) {
         let val = self.read_reg_v(x);
-        println!("{} {}",val, kk);
-        self.write_reg_v(x, val + kk);
+        // println!("{} {}",val, kk);
+        let res = val.overflowing_add(kk);
+        self.write_reg_v(x, res.0);
     }
 
     fn add_xy (&mut self, x: u8, y: u8) {
@@ -276,3 +277,13 @@ impl Cpu {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let cpu = Cpu::new();
+        // cpu.load_program()
+    }
+}

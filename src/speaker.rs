@@ -1,4 +1,4 @@
-use sdl2::audio::{AudioCallback, AudioSpecDesired};
+use sdl2::audio::{ AudioCallback, AudioSpecDesired };
 use std::time::Duration;
 use sdl2::AudioSubsystem;
 

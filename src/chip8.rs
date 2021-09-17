@@ -1,5 +1,7 @@
 use crate::cpu::Cpu;
 use sdl2::render::WindowCanvas;
+use std::fs::{File};
+use std::io::{Read, Result};
 
 pub struct Chip8 {
     cpu: Cpu,
@@ -12,9 +14,15 @@ impl Chip8 {
         }
     }
 
-    pub fn load_program(&mut self, filename: String) {
-        self.cpu.load_program(filename).unwrap();
+    pub fn load_program(&mut self, filename: String) -> Result<()> {
+        let mut buf = [0; 3583];
+        let mut file = File::open(filename)?;
+
+        file.read(&mut buf)?;
+
+        self.cpu.load_rom(buf).unwrap();
         self.cpu.bus.clear_screen();
+        Ok(())
     }
 
     pub fn run_cycle(&mut self) {

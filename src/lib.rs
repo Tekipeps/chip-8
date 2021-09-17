@@ -30,6 +30,7 @@ pub fn run() {
     let mut vm = Chip8::new();
 
     // vm.load_program("./test_opcode.ch8".to_string());
+    // vm.load_program("./c8_test.c8".to_string());
     vm.load_program("./games/TEST/IBM.ch8".to_string());
 
      loop {
@@ -38,7 +39,6 @@ pub fn run() {
 
          // vm.keyboard.get_key_press(&mut event_pump);
 
-        // let mut event_pump = sdl_context.event_pump().unwrap();
 
         // vm;
         ::std::thread::sleep(Duration::new(0,  1_000_000_000u32/60));

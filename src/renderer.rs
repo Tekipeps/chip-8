@@ -32,28 +32,23 @@ impl Renderer{
         }
     }
     // first bool for collision, second bool for pixel on/off
-    pub fn set_pixel(&mut self, mut x: u32, mut y: u32) -> (bool, bool) {
-        let mut isCollision = false;
+    pub fn set_pixel(&mut self, mut x: u32, mut y: u32) -> bool {
         if x > COLS {
             x -= COLS;
-            isCollision = true;
         } else if x < 0 {
             x += COLS;
-            isCollision = true;
         }
 
         if y > ROWS {
             y -= ROWS;
-            isCollision = true;
         } else if y < 0 {
             y += ROWS;
-            isCollision = true;
         }
 
 
         let pl = (x + (y * COLS)) as usize;
         self.buffer[pl] ^= 1;
-        (isCollision, self.buffer[pl] != 1)
+        self.buffer[pl] != 1
     }
     pub fn draw_byte(&mut self, byt: u8, x: u8, y: u8) -> bool {
         let mut x_coord = x as u32;
