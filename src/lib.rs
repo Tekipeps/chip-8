@@ -1,20 +1,21 @@
 pub mod chip8;
-pub mod keyboard;
+pub mod bus;
 pub mod renderer;
+pub mod keyboard;
 pub mod speaker;
-mod cpu;
+pub mod ram;
+pub mod cpu;
 
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
-use crate::chip8::{Chip8, SCALE};
+use crate::chip8::{Chip8};
 use crate::renderer::{COLS, ROWS};
 
+const SCALE: u32 = 15;
 
 pub fn run() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-    let audio_subsystem = sdl_context.audio().unwrap();
-
     let window = video_subsystem
         .window("Chip-8 Emulator", (COLS * SCALE)as u32,  (ROWS * SCALE) as u32)
         .position_centered()
@@ -22,17 +23,24 @@ pub fn run() {
         .unwrap();
 
     let mut canvas = window.into_canvas().present_vsync().build().unwrap();
-    let mut vm = Chip8::new(&mut canvas);
-    vm.cpu.load_from_file(String::from("./games/TEST/IBM.ch8")).unwrap();
-    vm.cpu.display_file_content();
+    // let audio_subsystem = sdl_context.audio().unwrap();
+    let mut event_pump = sdl_context.event_pump().unwrap();
 
-    'running: loop {
-        vm.cpu.renderer.test_render();
-        vm.cpu.renderer.render();
 
-        let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut vm = Chip8::new();
 
-        vm.cpu.
+    // vm.load_program("./test_opcode.ch8".to_string());
+    vm.load_program("./games/TEST/IBM.ch8".to_string());
+
+     loop {
+         vm.run_cycle();
+         vm.render(&mut canvas);
+
+         // vm.keyboard.get_key_press(&mut event_pump);
+
+        // let mut event_pump = sdl_context.event_pump().unwrap();
+
+        // vm;
         ::std::thread::sleep(Duration::new(0,  1_000_000_000u32/60));
     }
 }
