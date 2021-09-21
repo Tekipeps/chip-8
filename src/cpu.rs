@@ -52,6 +52,7 @@ impl Cpu {
                 let opcode = self.get_opcode();
                 println!("{:#06X}", opcode);
                 self.execute_instruction(opcode);
+
             }
         }
 
@@ -74,6 +75,7 @@ impl Cpu {
     }
 
     fn execute_instruction (&mut self, opcode: u16) {
+        self.pc += 2;
         let c = ((opcode & 0xF000) >> 12) as u8;
         let x = ((opcode & 0x0F00) >> 8) as u8;
         let y = ((opcode & 0x00F0) >> 4) as u8;
@@ -113,7 +115,9 @@ impl Cpu {
             (0xF,   _, 0x1, 0x5) => { self.delay_timer = self.read_reg_v(x) }, // Set delay timer = Vx.
             (0xF,   _, 0x1, 0x8) => {}, // Set sound timer = Vx.
             (0xF,   _, 0x1, 0xE) => { self.i = self.i + self.read_reg_v(x) as u16; }, // Set I = I + Vx.
-            (0xF,   _, 0x2, 0x9) => {}, // Set I = location of sprite for digit Vx.
+            (0xF,   _, 0x2, 0x9) => {
+                self.i = (self.read_reg_v(x) * 5) as u16;
+            }, // Set I = location of sprite for digit Vx.
             (0xF,   _, 0x3, 0x3) => {
                 let vx = self.read_reg_v(x);
                 self.bus.write_to_ram(self.i, vx/100);
@@ -125,7 +129,7 @@ impl Cpu {
             // _                    => todo!("opcode: {:#04x}", opcode),
             _                    => {},
         }
-        self.pc += 2;
+
     }
 
     fn drw_x_y(&mut self, x:u8, y:u8, n:u8){
@@ -173,37 +177,33 @@ impl Cpu {
             self.write_reg_v(0xF, 0);
         }
 
-        let res = arg.overflowing_mul(2);
-        self.write_reg_v(x, res.0);
+        self.write_reg_v(x, arg << 1);
     }
 
     fn subn_xy (&mut self, x: u8, y: u8) {
         let arg_1 = self.read_reg_v(x);
         let arg_2 = self.read_reg_v(y);
+        let res = arg_2.overflowing_sub(arg_1);
 
         if arg_2 > arg_1 {
             self.write_reg_v(0xF, 1);
         } else {
             self.write_reg_v(0xF, 0);
         }
-        let res = arg_2.overflowing_sub(arg_1);
+
         self.write_reg_v(x, res.0);
     }
     fn shr_x (&mut self, x: u8) {
         let arg = self.read_reg_v(x);
+        self.write_reg_v(0xF, arg & 0x01);
 
-        if (arg & 0x01) == 1 {
-            self.write_reg_v(0xF, 1);
-        } else {
-            self.write_reg_v(0xF, 0);
-        }
-
-        self.write_reg_v(x, arg / 2);
+        // self.write_reg_v(x, arg / 2);
+        self.write_reg_v(x, arg >> 1);
     }
     fn and_xy (&mut self, x: u8, y: u8) {
         let arg1 = self.read_reg_v(x);
-        let byt = self.read_reg_v(y);
-        self.write_reg_v(x, arg1 & byt);
+        let arg2 = self.read_reg_v(y);
+        self.write_reg_v(x, arg1 & arg2);
     }
     fn xor_xy (&mut self, x: u8, y: u8) {
         let arg1 = self.read_reg_v(x);
@@ -240,13 +240,15 @@ impl Cpu {
         let arg_1 = self.read_reg_v(x);
         let arg_2 = self.read_reg_v(y);
 
-        if arg_1 > arg_2 {
+        let res = arg_1.overflowing_sub(arg_2);
+
+        if arg_1 > arg_2 && res.1 {
             self.write_reg_v(0xF, 1);
         } else {
             self.write_reg_v(0xF, 0);
         }
 
-        self.write_reg_v(x, arg_1 - arg_2);
+        self.write_reg_v(x, res.0);
     }
 
     //noinspection ALL
@@ -266,7 +268,7 @@ impl Cpu {
         }
 
         self.sp -= 1;
-        self.pc = self.read_reg_v(self.sp) as u16;
+        self.pc = self.stack[self.sp as usize] as u16;
     }
 
     pub fn read_reg_v(&mut self, index: u8) -> u8 {
