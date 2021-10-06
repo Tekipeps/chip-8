@@ -2,6 +2,7 @@ use crate::cpu::Cpu;
 use sdl2::render::WindowCanvas;
 use std::fs::{File};
 use std::io::{Read, Result};
+use sdl2::EventPump;
 
 pub struct Chip8 {
     cpu: Cpu,
@@ -12,6 +13,10 @@ impl Chip8 {
         Chip8 {
             cpu: Cpu::new(),
         }
+    }
+
+    pub fn handle_event(&mut self, events: &mut EventPump) {
+        self.cpu.bus.handle_keyboard_event(events)
     }
 
     pub fn load_program(&mut self, filename: String) -> Result<()> {

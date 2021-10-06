@@ -2,6 +2,7 @@ use crate::ram::Ram;
 use crate::speaker;
 use crate::renderer::Renderer;
 use crate::keyboard::{Keyboard};
+use sdl2::EventPump;
 
 pub struct Bus {
     pub ram: Ram,
@@ -17,7 +18,9 @@ impl Bus {
             keyboard: Keyboard::new()
         }
     }
-
+    pub fn handle_keyboard_event (&mut self, events: &mut EventPump) {
+        self.keyboard.handle_keyboard_event(events);
+    }
     pub fn write_to_ram(&mut self, address: u16, byte: u8) {
         self.ram.write_byt(address, byte);
     }
