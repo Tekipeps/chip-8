@@ -2,6 +2,7 @@ use crate::cpu::Cpu;
 use sdl2::render::WindowCanvas;
 use std::fs::{File};
 use std::io::{Read, Result};
+use sdl2::EventPump;
 
 pub struct Chip8 {
     cpu: Cpu,
@@ -23,6 +24,10 @@ impl Chip8 {
         self.cpu.load_rom(buf).unwrap();
         self.cpu.bus.clear_screen();
         Ok(())
+    }
+
+    pub fn handle_event (&mut self, events: &mut EventPump) {
+        self.cpu.bus.keyboard.handle_keyboard_event(events);
     }
 
     pub fn run_cycle(&mut self) {

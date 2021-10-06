@@ -106,10 +106,22 @@ impl Cpu {
             (0xB,   _,   _,   _) => { self.pc = nnn + self.read_reg_v(0) as u16  }, // Jump to location nnn + V0.
             (0xC,   _,   _,   _) => self.write_reg_v(x, random::<u8>() & kk), // Set Vx = random byte AND kk.
             (0xD,   _,   _,   _) => self.drw_x_y(x, y, n), // Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
-            (0xE,   _, 0x9, 0xE) => {}, // Skip next instruction if key with the value of Vx is pressed.
-            (0xE,   _, 0xA, 0x1) => {}, // Skip next instruction if key with the value of Vx is not pressed.
+            (0xE,   _, 0x9, 0xE) => {
+                // let key = self.read_reg_v(x);
+                // if self.bus.keyboard.isKeyPressed(key) {
+                //     self.pc += 2;
+                // }
+            }, // Skip next instruction if key with the value of Vx is pressed.
+            (0xE,   _, 0xA, 0x1) => {
+                // let key = self.read_reg_v(x);
+                // if !self.bus.keyboard.isKeyPressed(key) {
+                //     self.pc += 2;
+                // }
+            }, // Skip next instruction if key with the value of Vx is not pressed.
             (0xF,   _, 0x0, 0x7) => self.write_reg_v(x, self.delay_timer), // Set Vx = delay timer value.
-            (0xF,   _, 0x0, 0xA) => {}, // Wait for a key press, store the value of the key in Vx.
+            (0xF,   _, 0x0, 0xA) => {
+
+            }, // Wait for a key press, store the value of the key in Vx.
             (0xF,   _, 0x1, 0x5) => { self.delay_timer = self.read_reg_v(x) }, // Set delay timer = Vx.
             (0xF,   _, 0x1, 0x8) => {}, // Set sound timer = Vx.
             (0xF,   _, 0x1, 0xE) => { self.i = self.i + self.read_reg_v(x) as u16; }, // Set I = I + Vx.

@@ -2,67 +2,82 @@ use sdl2::keyboard::Keycode;
 use sdl2::EventPump;
 use sdl2::event::Event;
 use std::process;
-use std::collections::HashMap;
-
-struct Key (Keycode, u8);
 
 pub struct Keyboard {
-    keymap: HashMap<Keycode, u8>,
-    pub pressed_keys: Vec<u8>,
+   pressed_keys: Vec<Option<u8>>,
 }
 
 impl Keyboard {
     pub fn new() -> Self {
-        let mut keys = [
-    Key(Keycode::Kp1, 0x1),
-    Key(Keycode::Kp2, 0x2),
-    Key(Keycode::Kp3, 0x3),
-    Key(Keycode::Kp4, 0xc),
-    Key(Keycode::Q, 0x4),
-    Key(Keycode::W, 0x5),
-    Key(Keycode::E, 0x6),
-    Key(Keycode::R, 0xD),
-    Key(Keycode::A, 0x7),
-    Key(Keycode::S, 0x8),
-    Key(Keycode::D, 0x9),
-    Key(Keycode::F, 0xE),
-    Key(Keycode::Z, 0xA),
-    Key(Keycode::X, 0x0),
-    Key(Keycode::C, 0xB),
-    Key(Keycode::V, 0xF),
-    ];
-    let mut keymap = HashMap::new();
-      for k in keys.iter() {
-          keymap.insert(k.0, k.1);
-      };
-
         Keyboard {
-            keymap,
             pressed_keys: Vec::new(),
         }
     }
 
-    pub fn get_key_press(&mut self, event_pump: &mut EventPump) {
+    pub fn isKeyPressed( &self, key: u8 ) -> bool {
+        self.pressed_keys.contains(&Some(key))
+    }
+
+    pub fn handle_keyboard_event(&mut self, event_pump: &mut EventPump) {
+        let mut keys = Vec::new();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit {..} |
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                    // process::exit(0);
-                    return;
+                    process::exit(0);
+                },
+                Event::KeyDown { keycode: Some(Keycode::Kp1), .. } => {
+                  keys.push(Some(0x1));
+                },
+                Event::KeyDown { keycode: Some(Keycode::Kp2), .. } => {
+                    keys.push(Some(0x2));
+                },
+                Event::KeyDown { keycode: Some(Keycode::Kp3), .. } => {
+                   keys.push(Some(0x3));
+                },
+                Event::KeyDown { keycode: Some(Keycode::Kp4), .. } => {
+                    keys.push(Some(0xC));
+                },
+                Event::KeyDown { keycode: Some(Keycode::Q), .. } => {
+                    keys.push(Some(0x4));
+                },
+                Event::KeyDown { keycode: Some(Keycode::W), .. } => {
+                    keys.push(Some(0x5));
+                },
+                Event::KeyDown { keycode: Some(Keycode::E), .. } => {
+                    keys.push(Some(0x6));
+                },
+                Event::KeyDown { keycode: Some(Keycode::R), .. } => {
+                   keys.push(Some(0xD));
+                },
+                Event::KeyDown { keycode: Some(Keycode::A), .. } => {
+                    keys.push(Some(0x7));
+                },
+                Event::KeyDown { keycode: Some(Keycode::S), .. } => {
+                    keys.push(Some(0x8));
+                },
+                Event::KeyDown { keycode: Some(Keycode::D), .. } => {
+                    keys.push(Some(0x9));
+                },
+                Event::KeyDown { keycode: Some(Keycode::F), .. } => {
+                    keys.push(Some(0xE));
+                },
+                Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
+                    keys.push(Some(0xA));
+                },
+                Event::KeyDown { keycode: Some(Keycode::X), .. } => {
+                    keys.push(Some(0x0));
+                },
+                Event::KeyDown { keycode: Some(Keycode::C), .. } => {
+                    keys.push(Some(0xB));
+                },
+                Event::KeyDown { keycode: Some(Keycode::V), .. } => {
+                    keys.push(Some(0xF));
                 },
 
                 _ => {}
             }
         }
-        let keys: Vec<Keycode> = event_pump
-            .keyboard_state()
-            .pressed_scancodes()
-            .filter_map(Keycode::from_scancode)
-            .collect();
-         match self.keymap.get(&keys[0]) {
-            Some(T) =>   self.pressed_keys.push(*T),
-            _ => {}
-        };
-
+        self.pressed_keys = keys;
     }
 }

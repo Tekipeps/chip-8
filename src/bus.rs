@@ -6,7 +6,7 @@ use crate::keyboard::{Keyboard};
 pub struct Bus {
     pub ram: Ram,
     pub screen: Renderer,
-    keyboard: Keyboard,
+    pub keyboard: Keyboard,
 }
 
 impl Bus {
@@ -17,7 +17,6 @@ impl Bus {
             keyboard: Keyboard::new()
         }
     }
-
     pub fn write_to_ram(&mut self, address: u16, byte: u8) {
         self.ram.write_byt(address, byte);
     }
