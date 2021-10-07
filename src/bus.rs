@@ -18,8 +18,17 @@ impl Bus {
             keyboard: Keyboard::new()
         }
     }
+    pub fn is_key_pressed(&self, key: u8 ) -> bool {
+        self.keyboard.is_key_pressed(key)
+    }
+    pub fn await_key_press(&mut self)  -> Option<u8> {
+        self.keyboard.await_keypress()
+    }
+    pub fn clear_keys(&mut self) {
+        self.keyboard.clear_keys();
+    }
     pub fn handle_keyboard_event (&mut self, events: &mut EventPump) {
-        self.keyboard.handle_keyboard_event(events);
+        self.keyboard.handle_event(events);
     }
     pub fn write_to_ram(&mut self, address: u16, byte: u8) {
         self.ram.write_byt(address, byte);

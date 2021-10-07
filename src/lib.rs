@@ -36,7 +36,7 @@ pub fn run() {
     // vm.load_program("./games/TEST/TAPEWORM.ch8".to_string());
     // vm.load_program("./games/TEST/TIMEBOMB.ch8".to_string());
     // vm.load_program("./games/TEST/X-MIRROR.ch8".to_string());
-    // vm.load_program("./games/TEST/Rocket2.ch8".to_string());
+    vm.load_program("./games/TEST/Rocket2.ch8".to_string());
 
      loop {
          vm.handle_event(&mut event_pump);

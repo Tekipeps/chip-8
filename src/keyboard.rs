@@ -4,21 +4,40 @@ use sdl2::event::Event;
 use std::process;
 
 pub struct Keyboard {
+    await_keypress: bool,
     pressed_keys: Vec<Option<u8>>,
 }
 
 impl Keyboard {
     pub fn new() -> Self {
         Keyboard {
+            await_keypress: false,
             pressed_keys: Vec::new(),
         }
     }
 
-    pub fn isKeyPressed( &self, key: u8 ) -> bool {
-        self.pressed_keys.contains(&Some(key))
+    pub fn await_keypress(&mut self) -> Option<u8> {
+        match self.pressed_keys.first() {
+            Some(a) => *a,
+            None => None
+        }
     }
 
-    pub fn handle_keyboard_event(&mut self, event_pump: &mut EventPump) {
+    pub fn getCurrKey(&self) -> Option<u8> {
+        match self.pressed_keys.first() {
+            Some(x) => *x,
+            None => None
+        }
+    }
+
+    pub fn is_key_pressed(&self, key: u8 ) -> bool {
+        self.pressed_keys.contains(&Some(key))
+    }
+    pub fn clear_keys(&mut self) {
+        self.pressed_keys = Vec::new();
+    }
+
+    pub fn handle_event(&mut self, event_pump: &mut EventPump) {
         let mut keys = Vec::new();
         for event in event_pump.poll_iter() {
             match event {
@@ -78,6 +97,7 @@ impl Keyboard {
                 _ => {}
             }
         }
+        self.await_keypress = false;
         self.pressed_keys = keys;
     }
 }
