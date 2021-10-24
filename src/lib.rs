@@ -6,7 +6,6 @@ pub mod speaker;
 pub mod ram;
 pub mod cpu;
 
-use sdl2::keyboard::Keycode;
 use std::time::Duration;
 use crate::chip8::{Chip8};
 use crate::renderer::{COLS, ROWS};
@@ -23,20 +22,19 @@ pub fn run() {
         .unwrap();
 
     let mut canvas = window.into_canvas().present_vsync().build().unwrap();
-    // let audio_subsystem = sdl_context.audio().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
 
     let mut vm = Chip8::new();
 
-    // vm.load_program("./test_opcode.ch8".to_string());
+    vm.load_program("./test_opcode.ch8".to_string()).unwrap();
     // vm.load_program("./c8_test.c8".to_string());
     // vm.load_program("./games/TEST/IBM.ch8".to_string());
     // vm.load_program("./games/TEST/C8PIC.ch8".to_string());
     // vm.load_program("./games/TEST/TAPEWORM.ch8".to_string());
     // vm.load_program("./games/TEST/TIMEBOMB.ch8".to_string());
     // vm.load_program("./games/TEST/X-MIRROR.ch8".to_string());
-    vm.load_program("./games/TEST/Rocket2.ch8".to_string());
+    // vm.load_program("./games/TEST/Rocket2.ch8".to_string());
 
      loop {
          vm.handle_event(&mut event_pump);

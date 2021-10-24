@@ -23,7 +23,7 @@ impl Keyboard {
         }
     }
 
-    pub fn getCurrKey(&self) -> Option<u8> {
+    pub fn get_curr_key(&self) -> Option<u8> {
         match self.pressed_keys.first() {
             Some(x) => *x,
             None => None

@@ -1,12 +1,12 @@
 use crate::ram::Ram;
-use crate::speaker;
 use crate::renderer::Renderer;
 use crate::keyboard::{Keyboard};
 use sdl2::EventPump;
+use sdl2::render::WindowCanvas;
 
 pub struct Bus {
-    pub ram: Ram,
-    pub screen: Renderer,
+    ram: Ram,
+    screen: Renderer,
     keyboard: Keyboard,
 }
 
@@ -42,4 +42,10 @@ impl Bus {
     pub fn clear_screen (&mut self) {
         self.screen.clear();
     }
+    pub fn render(&mut self, mut canvas: &mut WindowCanvas) {
+        self.screen.render(&mut canvas);
+    }
+   pub fn set_pixel(&mut self, x: u32, y: u32) -> bool {
+       self.screen.set_pixel(x, y)
+   }
 }

@@ -3,7 +3,7 @@ use std::time::Duration;
 use sdl2::AudioSubsystem;
 
 pub struct Speaker {
-    sound_timer: u8,
+    // sound_timer: u8,
     phase_inc: f32,
     phase: f32,
     volume: f32
@@ -30,7 +30,7 @@ impl AudioCallback for Speaker {
 impl Speaker {
     pub fn new() -> Self {
         Speaker {
-            sound_timer: 0,
+            // sound_timer: 0,
             phase_inc: 440.0,
             phase: 0.0,
             volume: 0.25,

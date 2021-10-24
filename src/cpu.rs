@@ -1,7 +1,6 @@
 use crate::bus::Bus;
 use rand::random;
-use std::io::{Result, Read};
-use std::fs::File;
+use std::io::{Result};
 
 pub struct Cpu {
     v: [u8; 16],
@@ -42,7 +41,7 @@ impl Cpu {
 
 
     fn get_opcode(&mut self) -> u16 {
-        (((self.bus.read_from_ram(self.pc) as u16 ) << 8_u16 ) | (self.bus.read_from_ram(self.pc + 1) as u16))
+        ((self.bus.read_from_ram(self.pc) as u16 ) << 8_u16 ) | (self.bus.read_from_ram(self.pc + 1) as u16)
     }
 
     pub fn cycle(&mut self) {
@@ -81,7 +80,7 @@ impl Cpu {
         let x = ((opcode & 0x0F00) >> 8) as u8;
         let y = ((opcode & 0x00F0) >> 4) as u8;
         let n = ((opcode & 0x000F) >> 0) as u8;
-        let nnn = (opcode & 0x0FFF);
+        let nnn = opcode & 0x0FFF;
         let kk = (opcode & 0x00FF) as u8;
 
         match (c, x, y, n) {
@@ -158,7 +157,7 @@ impl Cpu {
                 if (sprite_row & 0x80) > 0 {
                     let vx = self.read_reg_v(x);
                     let vy = self.read_reg_v(y);
-                    if self.bus.screen.set_pixel((vx + col) as u32, (vy + row) as u32) {
+                    if self.bus.set_pixel((vx + col) as u32, (vy + row) as u32) {
                       self.write_reg_v(0xF, 1);
                     }
                 }

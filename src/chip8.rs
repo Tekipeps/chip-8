@@ -35,6 +35,6 @@ impl Chip8 {
     }
 
     pub fn render(&mut self, mut canvas: &mut WindowCanvas) {
-        self.cpu.bus.screen.render(&mut canvas);
+        self.cpu.bus.render(&mut canvas);
     }
 }

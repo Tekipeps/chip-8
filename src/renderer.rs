@@ -7,17 +7,13 @@ pub const ROWS: u32 = 32;
 pub const COLS: u32 = 64;
 
 pub struct Renderer {
-    pub buffer: [u8; (ROWS*COLS) as usize],
-    pub rows: u32,
-    pub cols: u32,
-    pub scale: u32,
-    // pub width: usize,
-    // pub height: usize,
+    buffer: [u8; (ROWS*COLS) as usize],
+    rows: u32,
+    cols: u32,
+    scale: u32,
 }
 
 impl Renderer{
-
-
     pub fn new() -> Self {
         let rows = ROWS;
         let cols = COLS;
@@ -27,22 +23,17 @@ impl Renderer{
             rows,
             cols,
             scale,
-            // width: (COLS * scale) as usize,
-            // height: (ROWS * scale) as usize,
         }
     }
+
     // first bool for collision, second bool for pixel on/off
     pub fn set_pixel(&mut self, mut x: u32, mut y: u32) -> bool {
         if x > COLS {
             x -= COLS;
-        } else if x < 0 {
-            x += COLS;
         }
 
         if y > ROWS {
             y -= ROWS;
-        } else if y < 0 {
-            y += ROWS;
         }
 
 
@@ -50,11 +41,12 @@ impl Renderer{
         self.buffer[pl] ^= 1;
         self.buffer[pl] != 1
     }
+    #[allow(unused_variables)]
     pub fn draw_byte(&mut self, byt: u8, x: u8, y: u8) -> bool {
         let mut x_coord = x as u32;
         let mut y_coord = y as u32;
         let mut b = byt;
-        let erased = false;
+        let mut erased = false;
 
         for _ in 0..8 {
             x_coord %= self.cols;
@@ -66,7 +58,7 @@ impl Renderer{
             self.buffer[index] ^= bit;
 
             if prev_val == 1 && self.buffer[index] == 0 {
-              erased == true;
+              erased = true;
             }
 
             x_coord += 1;
